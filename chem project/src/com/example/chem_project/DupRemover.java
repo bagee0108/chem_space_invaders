@@ -3,12 +3,18 @@ import java.io.*;
 import java.util.*;
 
 
-public class dupRemover {
+/**
+ * Writes a copy of the second file with every line that also appears in the first file removed.
+ *
+ * Usage: java com.example.chem_project.DupRemover [fileToSubtract] [sourceFile] [outputFile]
+ */
+public class DupRemover {
 
     public static void main(String[] args) {
-        String filePath1 = "C:\\intellij\\chem project\\src\\com\\example\\chem_project\\leftHMid.txt";
-        String filePath2 = "C:\\intellij\\chem project\\src\\com\\example\\chem_project\\p_mid o_mid.txt";
-        String outputPath = "C:\\intellij\\chem project\\src\\com\\example\\chem_project\\p_mid o_mid no dupe.txt";
+        String rawData = "chem project/src/com/example/chem_project/rawData/";
+        String filePath1 = args.length > 0 ? args[0] : rawData + "leftHMid.txt";
+        String filePath2 = args.length > 1 ? args[1] : rawData + "p_mid o_mid.txt";
+        String outputPath = args.length > 2 ? args[2] : rawData + "p_mid o_mid no dupe.txt";
 
         Set<String> valuesInDoc1 = new HashSet<>();
         List<String> valuesInDoc2 = new ArrayList<>();

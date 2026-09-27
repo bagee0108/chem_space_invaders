@@ -1,2 +1,14 @@
 # Project exclude paths
 /out/
+# Build output
+out/
+*.class
+
+# IntelliJ per-user files
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/shelf/
+
+# OS files
+.DS_Store
+Thumbs.db
