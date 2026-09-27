@@ -29,7 +29,18 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 
-public class game extends Application {
+/**
+ * Space Invaders style simulation used to collect collision-time data.
+ *
+ * A player block patrols a fixed region at the bottom of the screen while red blocks fall from
+ * random positions at the top. Each time a falling block hits the player, the elapsed time is
+ * logged to a raw data file and the round restarts. Press B during a round to return to settings.
+ */
+public class Game extends Application {
+    // Directory that collision times are written to. Override with -Dchem.dataDir=<path>.
+    private static final String DATA_DIR = System.getProperty("chem.dataDir",
+            "chem project/src/com/example/chem_project/rawData");
+
     private Stage theStage;
     private Pane parent;
     private Rectangle player;
@@ -373,70 +384,17 @@ public class game extends Application {
                             iterator.remove();
                             parent.getChildren().remove(enemy);
                         } else if (enemy.getBoundsInParent().intersects(player.getBoundsInParent())) {
-
-
-                           /*if (setting == 1){
-                               System.out.println(timerLabel.getText());
-                               appendToLogFile(timerLabel.getText(),FILEPATH);
-                               //dataList.add(timerLabel.getText());
-                           } else if (setting == 2) {
-                               System.out.println(timerLabel.getText());
-                               appendToLogFile(timerLabel.getText(),FILEPATH);
-                           } else if (setting == 3) {
-                               System.out.println(timerLabel.getText());
-                               appendToLogFile(timerLabel.getText(),FILEPATH);
-                           }else if (setting == 4) {
-                               System.out.println(timerLabel.getText());
-                               appendToLogFile(timerLabel.getText(),FILEPATH);
-                           }else if (setting == 5) {
-                               System.out.println(timerLabel.getText());
-                               appendToLogFile(timerLabel.getText(), FILEPATH);
-                           }
-
-
-                            */
-
-
-                            if(Objects.equals(playerSpeedSetting, "slow")){
-                                //if(Objects.equals(oppSpeedSetting, "slow")){
-                                    System.out.println(timerLabel.getText());
-                                    appendToLogFile(timerLabel.getText(), "C:\\chem_space_invaders\\chem project\\src\\com\\example\\chem_project\\rawData\\pSlow1000x.txt");
-                                //}else if(Objects.equals(oppSpeedSetting, "mid")){
-                                    //System.out.println(timerLabel.getText());
-                                    // appendToLogFile(timerLabel.getText(), FILEPATH );
-                                //}else if(Objects.equals(oppSpeedSetting, "fast")){
-                                    //System.out.println(timerLabel.getText());
-                                    // appendToLogFile(timerLabel.getText(), FILEPATH );
-
-                            }else if(Objects.equals(playerSpeedSetting, "mid")){
-                                //if(Objects.equals(oppSpeedSetting, "slow")){
-                                    System.out.println(timerLabel.getText());
-                                     appendToLogFile(timerLabel.getText(), "C:\\chem_space_invaders\\chem project\\src\\com\\example\\chem_project\\rawData\\pMid1000x.txt" );
-                                //}else if(Objects.equals(oppSpeedSetting, "mid")){
-                                    //System.out.println(timerLabel.getText());
-                                    // appendToLogFile(timerLabel.getText(), FILEPATH );
-                                //}else if(Objects.equals(oppSpeedSetting, "fast")){
-                                    //System.out.println(timerLabel.getText());
-                                    //appendToLogFile(timerLabel.getText(), FILEPATH );
-                                //}
-                            }else if(Objects.equals(playerSpeedSetting, "fast")){
-                                //if(Objects.equals(oppSpeedSetting, "slow")){
-                                    System.out.println(timerLabel.getText());
-                                     appendToLogFile(timerLabel.getText(),"C:\\chem_space_invaders\\chem project\\src\\com\\example\\chem_project\\rawData\\pFast1000x.txt" );
-                                //}else if(Objects.equals(oppSpeedSetting, "mid")){
-                                    //System.out.println(timerLabel.getText());
-                                    // appendToLogFile(timerLabel.getText(), FILEPATH );
-                                //}else if(Objects.equals(oppSpeedSetting, "fast")){
-                                    //System.out.println(timerLabel.getText());
-                                    // appendToLogFile(timerLabel.getText(), FILEPATH );
-                                //}
+                            System.out.println(timerLabel.getText());
+                            String logFile = logFileForPlayerSpeed(playerSpeedSetting);
+                            if (logFile != null) {
+                                appendToLogFile(timerLabel.getText(), logFile);
                             }
                             restartGame();
+                            break; // restartGame() clears the enemy list, so stop iterating it
                         }
                     }
                 }catch (Exception ex){
-
-
+                    ex.printStackTrace();
                 }
             }
         };
@@ -493,14 +451,23 @@ public class game extends Application {
         theStage.setScene(scene);
         theStage.show();
     }
+    // Maps the player speed setting to the raw data file that collision times are appended to.
+    private static String logFileForPlayerSpeed(String speedSetting) {
+        switch (speedSetting) {
+            case "slow": return DATA_DIR + File.separator + "pSlow1000x.txt";
+            case "mid":  return DATA_DIR + File.separator + "pMid1000x.txt";
+            case "fast": return DATA_DIR + File.separator + "pFast1000x.txt";
+            default:     return null;
+        }
+    }
+
     private void appendToLogFile(String message,String filename) {
-        try {
-            FileWriter fw = new FileWriter(filename, true);
+        try (FileWriter fw = new FileWriter(filename, true)) {
             fw.write(message);
             fw.write("\n");
-            fw.close();
         }
         catch(IOException e) {
+            System.err.println("Could not write to " + filename + ": " + e.getMessage());
         }
     }
     public static void main(String[] args) {

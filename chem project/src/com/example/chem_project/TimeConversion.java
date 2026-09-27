@@ -2,11 +2,18 @@ package com.example.chem_project;
 
 import java.io.*;
 
-public class timeConversion {
+/**
+ * Converts raw collision times ("mm:ss:hh", hundredths of a second) into decimal seconds.
+ *
+ * Usage: java com.example.chem_project.TimeConversion [inputFile] [outputFile]
+ */
+public class TimeConversion {
     public static void main(String[] args) {
         int conversionNo = 0;
-        String filename = "C:\\chem_space_invaders\\chem project\\src\\com\\example\\chem_project\\rawData\\pFast1000x.txt"; // Replace with your file path
-        String outputFilename = "C:\\chem_space_invaders\\chem project\\src\\com\\example\\chem_project\\convertedData\\pFast1000x_conv.txt"; // Output file for updated values
+        String filename = args.length > 0 ? args[0]
+                : "chem project/src/com/example/chem_project/rawData/pFast1000x.txt";
+        String outputFilename = args.length > 1 ? args[1]
+                : "chem project/src/com/example/chem_project/convertedData/pFast1000x_conv.txt";
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filename));
              BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename))) {
